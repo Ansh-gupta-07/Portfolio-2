@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creative Coder — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f2f0eb;
+      --black: #0d0d0d;
+      --white: #f2f0eb;
+      --accent: #ff3c00;
+      --muted: #999;
+      --border: #d8d5ce;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--black);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+      cursor: none
+    }
+
+    /* CURSOR */
+    #cursor {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: var(--black);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width .2s, height .2s, background .2s
+    }
+
+    #cursor-ring {
+      position: fixed;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--black);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform .08s, width .2s, height .2s, opacity .2s
+    }
+
+    body:hover #cursor {
+      opacity: 1
+    }
+
+    /* LOADER */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--black);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .8s
+    }
+
+    #loader.hide {
+      opacity: 0;
+      pointer-events: none
+    }
+
+    .loader-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(60px, 12vw, 130px);
+      color: var(--white);
+      letter-spacing: 4px;
+      line-height: 1
+    }
+
+    .loader-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: #555;
+      letter-spacing: 3px;
+      margin-top: 20px
+    }
+
+    .loader-bar-wrap {
+      width: 200px;
+      height: 1px;
+      background: #222;
+      margin-top: 40px
+    }
+
+    .loader-bar {
+      height: 1px;
+      background: var(--white);
+      width: 0%;
+      transition: width .05s linear
+    }
+
+    .loader-pct {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: #444;
+      margin-top: 10px;
+      letter-spacing: 2px
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 48px;
+      mix-blend-mode: normal
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 3px;
+      color: var(--black);
+      text-decoration: none
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none
+    }
+
+    .nav-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--black);
+      text-decoration: none;
+      opacity: .5;
+      transition: opacity .3s
+    }
+
+    .nav-links a:hover {
+      opacity: 1
+    }
+
+    .nav-cta {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      padding: 10px 22px;
+      border: 1px solid var(--black);
+      color: var(--black);
+      text-decoration: none;
+      transition: background .3s, color .3s
+    }
+
+    .nav-cta:hover {
+      background: var(--black);
+      color: var(--white)
+    }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 48px;
+      padding-top: 100px;
+      position: relative;
+      overflow: hidden
+    }
+
+    .hero-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--muted);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .hero-tag::before {
+      content: '';
+      width: 30px;
+      height: 1px;
+      background: var(--muted)
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(80px, 16vw, 200px);
+      line-height: .9;
+      letter-spacing: 2px;
+      color: var(--black);
+      position: relative;
+      z-index: 2
+    }
+
+    .hero-title span {
+      color: var(--accent)
+    }
+
+    .hero-title .outline {
+      -webkit-text-stroke: 1.5px var(--black);
+      color: transparent
+    }
+
+    .hero-sub {
+      font-size: clamp(14px, 1.5vw, 17px);
+      color: #555;
+      max-width: 480px;
+      line-height: 1.8;
+      margin-top: 40px;
+      font-weight: 300
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      margin-top: 48px;
+      flex-wrap: wrap
+    }
+
+    .btn-primary {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      padding: 16px 36px;
+      background: var(--black);
+      color: var(--white);
+      text-decoration: none;
+      transition: transform .3s, box-shadow .3s
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 4px 4px 0 var(--accent)
+    }
+
+    .btn-outline {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      padding: 16px 36px;
+      border: 1px solid var(--black);
+      color: var(--black);
+      text-decoration: none;
+      transition: background .3s, color .3s
+    }
+
+    .btn-outline:hover {
+      background: var(--black);
+      color: var(--white)
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 48px;
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .hero-scroll::after {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--muted);
+      animation: scrollLine 2s ease-in-out infinite
+    }
+
+    @keyframes scrollLine {
+
+      0%,
+      100% {
+        width: 20px;
+        opacity: .3
+      }
+
+      50% {
+        width: 60px;
+        opacity: 1
+      }
+    }
+
+    .hero-marquee {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      padding: 14px 0;
+      background: var(--bg)
+    }
+
+    .marquee-inner {
+      display: flex;
+      gap: 60px;
+      white-space: nowrap;
+      animation: marquee 18s linear infinite
+    }
+
+    .marquee-item {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 4px;
+      color: var(--muted)
+    }
+
+    .marquee-dot {
+      color: var(--accent)
+    }
+
+    @keyframes marquee {
+      0% {
+        transform: translateX(0)
+      }
+
+      100% {
+        transform: translateX(-50%)
+      }
+    }
+
+    /* ABOUT */
+    #about {
+      padding: 120px 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start
+    }
+
+    .about-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--muted);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .about-label::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--muted)
+    }
+
+    .about-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(100px, 15vw, 180px);
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: -20px
+    }
+
+    .about-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 6vw, 72px);
+      line-height: 1;
+      margin-bottom: 32px
+    }
+
+    .about-body {
+      font-size: 15px;
+      color: #555;
+      line-height: 2;
+      font-weight: 300
+    }
+
+    .about-body p+p {
+      margin-top: 20px
+    }
+
+    .about-right {
+      padding-top: 60px
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 48px
+    }
+
+    .stat {
+      background: var(--bg);
+      padding: 28px 24px
+    }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: var(--black);
+      line-height: 1
+    }
+
+    .stat-num span {
+      font-size: 24px;
+      color: var(--accent)
+    }
+
+    .stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      margin-top: 6px
+    }
+
+    .fact-box {
+      border: 1px solid var(--border);
+      padding: 28px;
+      margin-top: 24px
+    }
+
+    .fact-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      margin-bottom: 10px
+    }
+
+    .fact-text {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.7;
+      font-weight: 300
+    }
+
+    /* PROJECTS */
+    #projects {
+      padding: 120px 0
+    }
+
+    .projects-header {
+      padding: 0 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 60px
+    }
+
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .section-label::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--muted)
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 6vw, 72px);
+      line-height: 1
+    }
+
+    .projects-sub {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 260px;
+      text-align: right;
+      line-height: 1.7
+    }
+
+    /* 3D CANVAS */
+    #canvas-wrap {
+      position: relative;
+      height: 520px;
+      overflow: hidden
+    }
+
+    #three-canvas {
+      width: 100%;
+      height: 100%;
+      display: block
+    }
+
+    .canvas-fade-l,
+    .canvas-fade-r {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 120px;
+      z-index: 2;
+      pointer-events: none
+    }
+
+    .canvas-fade-l {
+      left: 0;
+      background: linear-gradient(to right, var(--bg), transparent)
+    }
+
+    .canvas-fade-r {
+      right: 0;
+      background: linear-gradient(to left, var(--bg), transparent)
+    }
+
+    .canvas-hint {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--muted);
+      z-index: 3;
+      white-space: nowrap
+    }
+
+    /* PROJECT MODAL */
+    #proj-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(242, 240, 235, 0.96);
+      backdrop-filter: blur(12px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    #proj-modal.open {
+      display: flex
+    }
+
+    #pm-inner {
+      background: var(--black);
+      color: var(--white);
+      width: 560px;
+      max-width: 92vw;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 56px;
+      position: relative;
+      animation: slideUp .45s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    #pm-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: var(--white);
+      font-size: 18px;
+      cursor: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #pm-close:hover {
+      background: var(--accent)
+    }
+
+    #pm-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: #555;
+      margin-bottom: 12px
+    }
+
+    #pm-cat {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      margin-bottom: 10px
+    }
+
+    #pm-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 52px;
+      line-height: 1;
+      margin-bottom: 20px
+    }
+
+    #pm-desc {
+      font-size: 14px;
+      color: #aaa;
+      line-height: 1.9;
+      margin-bottom: 28px;
+      font-weight: 300
+    }
+
+    .pm-section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: #555;
+      margin-bottom: 12px
+    }
+
+    #pm-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px
+    }
+
+    .pm-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      padding: 6px 14px;
+      border: 1px solid #333;
+      color: #888;
+      letter-spacing: 1px
+    }
+
+    #pm-highlights {
+      margin-bottom: 32px
+    }
+
+    .pm-highlight {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #1a1a1a;
+      font-size: 13px;
+      color: #aaa;
+      font-weight: 300
+    }
+
+    .pm-highlight::before {
+      content: '→';
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    #pm-link {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      padding: 14px 32px;
+      background: var(--accent);
+      color: var(--white);
+      text-decoration: none;
+      transition: opacity .2s;
+      cursor: none
+    }
+
+    #pm-link:hover {
+      opacity: .8
+    }
+
+    /* ACHIEVEMENTS */
+    #recognition {
+      padding: 120px 48px;
+      border-top: 1px solid var(--border)
+    }
+
+    .recog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 60px
+    }
+
+    .recog-card {
+      background: var(--bg);
+      padding: 40px 32px;
+      transition: background .3s
+    }
+
+    .recog-card:hover {
+      background: var(--black)
+    }
+
+    .recog-card:hover .recog-name {
+      color: var(--white)
+    }
+
+    .recog-card:hover .recog-label {
+      color: #555
+    }
+
+    .recog-icon {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 40px;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 16px
+    }
+
+    .recog-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: var(--black);
+      line-height: 1.2;
+      margin-bottom: 8px;
+      transition: color .3s
+    }
+
+    .recog-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      transition: color .3s
+    }
+
+    /* CONTACT */
+    #contact {
+      padding: 120px 48px;
+      background: var(--black);
+      color: var(--white)
+    }
+
+    .contact-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: #444;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .contact-label::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: #333
+    }
+
+    .contact-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(60px, 10vw, 130px);
+      line-height: .9;
+      margin-bottom: 60px;
+      color: var(--white)
+    }
+
+    .contact-title span {
+      -webkit-text-stroke: 1px #333;
+      color: transparent
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      border-top: 1px solid #1a1a1a;
+      padding-top: 60px
+    }
+
+    .contact-block-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: #444;
+      margin-bottom: 20px
+    }
+
+    .contact-block-text {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.9;
+      font-weight: 300;
+      margin-bottom: 28px
+    }
+
+    .contact-btn {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      padding: 14px 32px;
+      border: 1px solid #333;
+      color: var(--white);
+      text-decoration: none;
+      transition: border-color .3s, background .3s;
+      cursor: none
+    }
+
+    .contact-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent)
+    }
+
+    .socials {
+      display: flex;
+      flex-direction: column;
+      gap: 20px
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid #1a1a1a;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: #666;
+      text-decoration: none;
+      transition: color .3s
+    }
+
+    .social-link:hover {
+      color: var(--white)
+    }
+
+    .social-link::after {
+      content: '↗';
+      transition: transform .3s
+    }
+
+    .social-link:hover::after {
+      transform: translate(3px, -3px)
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--black);
+      border-top: 1px solid #111;
+      padding: 32px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .footer-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: #333
+    }
+
+    .footer-love {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 1px;
+      color: #333
+    }
+
+    .footer-love span {
+      color: var(--accent)
+    }
+
+    /* ANIMATIONS */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity .8s, transform .8s
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: none
+    }
+
+    .reveal-delay-1 {
+      transition-delay: .1s
+    }
+
+    .reveal-delay-2 {
+      transition-delay: .2s
+    }
+
+    .reveal-delay-3 {
+      transition-delay: .3s
+    }
+
+    @media(max-width:768px) {
+      nav {
+        padding: 20px 24px
+      }
+
+      .nav-links {
+        display: none
+      }
+
+      #hero,
+      #about,
+      #projects .projects-header,
+      #recognition,
+      #contact {
+        padding-left: 24px;
+        padding-right: 24px
+      }
+
+      #about {
+        grid-template-columns: 1fr
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr
+      }
+
+      .hero-title {
+        font-size: clamp(60px, 18vw, 110px)
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- LOADER -->
+  <div id="loader">
+    <div class="loader-text">CREATIVE</div>
+    <div class="loader-text" style="-webkit-text-stroke:1px #f2f0eb;color:transparent">CODER</div>
+    <div class="loader-sub">LOADING PORTFOLIO</div>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar" id="loader-bar"></div>
+    </div>
+    <div class="loader-pct" id="loader-pct">0%</div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">AG</a>
+    <ul class="nav-links">
+      <li><a href="#about">ABOUT</a></li>
+      <li><a href="#projects">PROJECTS</a></li>
+      <li><a href="#recognition">RECOGNITION</a></li>
+      <li><a href="#contact">CONTACT</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">COLLABORATE</a>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-tag reveal">CREATIVE CODER · WEB ANIMATOR</div>
+    <h1 class="hero-title reveal reveal-delay-1">
+      CREATIVE<br>
+      <span class="outline">CODER</span><br>
+      <span>&amp;</span> DEV<span style="color:var(--accent)">.</span>
+    </h1>
+    <p class="hero-sub reveal reveal-delay-2">
+      A developer who codes immersive 3D web experiences. I teach Three.js, React Three Fiber, GLSL Shaders and GSAP —
+      turning raw JavaScript into things that feel alive.
+    </p>
+    <div class="hero-btns reveal reveal-delay-3">
+      <a href="#projects" class="btn-primary">VIEW PROJECTS</a>
+      <a href="https://youtube.com" target="_blank" class="btn-outline">YOUTUBE CHANNEL</a>
+    </div>
+    <div class="hero-scroll">SCROLL</div>
+    <div class="hero-marquee">
+      <div class="marquee-inner" id="marquee"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-left">
+      <div class="about-label reveal">ABOUT ME</div>
+      <div class="about-num reveal">02</div>
+      <h2 class="about-title reveal">I MAKE THE WEB FEEL<br><span style="color:var(--accent)">ALIVE.</span></h2>
+    </div>
+    <div class="about-right">
+      <div class="about-body reveal">
+        <p>I'm a creative coder obsessed with the intersection of design, code and motion. I build immersive 3D web
+          experiences using Three.js, React Three Fiber and GLSL Shaders — and I teach everything I learn on YouTube.
+        </p>
+        <p>My tutorials cover everything from beginner-friendly GSAP animations to advanced GPU shader programming.
+          Every video is a step-by-step deep dive into the tools that make the modern web extraordinary.</p>
+        <p>I believe the web should move people — not just display information. Every pixel, every frame, every shader
+          uniform is a chance to create something unforgettable.</p>
+      </div>
+      <div class="about-stats reveal">
+        <div class="stat">
+          <div class="stat-num">6<span>+</span></div>
+          <div class="stat-label">TUTORIALS</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">3<span>K</span></div>
+          <div class="stat-label">SUBSCRIBERS</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">2<span>Y</span></div>
+          <div class="stat-label">EXPERIENCE</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">∞</div>
+          <div class="stat-label">CURIOSITY</div>
+        </div>
+      </div>
+      <div class="fact-box reveal">
+        <div class="fact-label">// FUN FACT</div>
+        <div class="fact-text">I write GLSL shaders for fun. When I'm not coding, I'm probably watching a GPU benchmark
+          video or reading about WebGPU.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="projects-header">
+      <div>
+        <div class="section-label reveal">SELECTED WORK</div>
+        <h2 class="section-title reveal">PROJECTS<span style="color:var(--accent)">.</span></h2>
+      </div>
+      <p class="projects-sub reveal">Every project is a real tutorial or creative experiment — drag to explore.</p>
+    </div>
+    <div id="canvas-wrap">
+      <canvas id="three-canvas"></canvas>
+      <div class="canvas-fade-l"></div>
+      <div class="canvas-fade-r"></div>
+      <div class="canvas-hint">DRAG · SCROLL · CLICK TO OPEN</div>
+    </div>
+  </section>
+
+  <!-- RECOGNITION -->
+  <section id="recognition">
+    <div class="section-label reveal">ACHIEVEMENTS</div>
+    <h2 class="section-title reveal">RECOGNITION<span style="color:var(--accent)">.</span></h2>
+    <div class="recog-grid">
+      <div class="recog-card reveal">
+        <div class="recog-icon">YT</div>
+        <div class="recog-name">YOUTUBE CREATOR</div>
+        <div class="recog-label">CREATIVE CODING TUTORIALS</div>
+      </div>
+      <div class="recog-card reveal reveal-delay-1">
+        <div class="recog-icon">3D</div>
+        <div class="recog-name">THREE.JS SPECIALIST</div>
+        <div class="recog-label">WEBGL · SHADERS · R3F</div>
+      </div>
+      <div class="recog-card reveal reveal-delay-2">
+        <div class="recog-icon">FX</div>
+        <div class="recog-name">GSAP CERTIFIED</div>
+        <div class="recog-label">ANIMATION · SCROLLTRIGGER</div>
+      </div>
+      <div class="recog-card reveal reveal-delay-3">
+        <div class="recog-icon">∞</div>
+        <div class="recog-name">OPEN SOURCE</div>
+        <div class="recog-label">CREATIVE CODE CONTRIBUTOR</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-label">GET IN TOUCH</div>
+    <div class="contact-title">LET'S<br><span>BUILD</span><br>TOGETHER<span style="color:var(--accent)">.</span></div>
+    <div class="contact-grid">
+      <div>
+        <div class="contact-block-label">// COLLABORATE</div>
+        <p class="contact-block-text">Got an idea for a creative web project? A tutorial series you want to see? Or just
+          want to geek out about shaders? Let's talk.</p>
+        <a href="mailto:anshgupta3117@gmail.com" class="contact-btn">SEND A MESSAGE</a>
+      </div>
+      <div>
+        <div class="contact-block-label">// FIND ME</div>
+        <div class="socials">
+
+          <a href="https://github.com/Ansh-gupta-07" target="_blank" class="social-link">GITHUB</a>
+          <a href="https://www.instagram.com/ANSH_GUPTA_17_08/" target="_blank" class="social-link">INSTAGRAM</a>
+          <a href="https://www.linkedin.com/in/ansh-gupta-406381294/" target="_blank" class="social-link">LINKEDIN</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-text">©2026 CREATIVE CODER</div>
+    <div class="footer-love">MADE WITH <span>♥</span> & GLSL</div>
+  </footer>
+
+  <!-- PROJECT MODAL -->
+  <div id="proj-modal">
+    <div id="pm-inner">
+      <button id="pm-close">×</button>
+      <div id="pm-num"></div>
+      <div id="pm-cat"></div>
+      <div id="pm-title"></div>
+      <div id="pm-desc"></div>
+      <div class="pm-section-label">// TECH STACK</div>
+      <div id="pm-tags"></div>
+      <div class="pm-section-label">// HIGHLIGHTS</div>
+      <div id="pm-highlights"></div>
+      <a href="#" id="pm-link" target="_blank">WATCH TUTORIAL →</a>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    /* ── DATA ── */
+    const projects = [
+      {
+        num: '01', cat: 'FULL TUTORIAL', title: 'THREE.JS COMPLETE GUIDE',
+        desc: 'A complete step-by-step Three.js tutorial series for beginners to advanced developers. Learn scenes, cameras, geometries, materials, lights, shadows and animation from the ground up. Build 5 real projects along the way.',
+        tags: ['Three.js', 'WebGL', 'JavaScript', 'Geometry', 'Lighting', 'Animation'],
+        highlights: ['Build 5 complete 3D web projects', 'Scene setup, cameras, controls from scratch', 'Custom materials and physically-based rendering'],
+        acc: [0.22, 0.05, 1.0], dark: [0.06, 0.01, 0.28], link: '#'
+      },
+      {
+        num: '02', cat: 'FULL TUTORIAL', title: 'REACT THREE FIBER',
+        desc: 'Master React Three Fiber — the declarative React renderer for Three.js. Build 3D scenes using JSX, use hooks like useFrame and useThree, integrate with Zustand, and deploy production-ready 3D React apps.',
+        tags: ['React Three Fiber', 'React', 'drei', '@react-three', 'Hooks', 'Zustand'],
+        highlights: ['Declarative 3D with JSX syntax', 'Custom hooks for animation and state', 'Integrate with existing React ecosystems'],
+        acc: [1.0, 0.12, 0.18], dark: [0.28, 0.02, 0.04], link: '#'
+      },
+      {
+        num: '03', cat: 'ADVANCED', title: 'GLSL SHADERS FROM ZERO',
+        desc: 'Go deep into GLSL shader programming. Write custom vertex and fragment shaders from scratch, implement Perlin noise, plasma effects, distortion, ripples, and full-screen post-processing that runs entirely on the GPU.',
+        tags: ['GLSL', 'ShaderMaterial', 'Vertex Shader', 'Fragment Shader', 'Uniforms', 'Noise'],
+        highlights: ['Write vertex and fragment shaders from scratch', 'GPU-powered noise, distortion and plasma effects', 'Custom post-processing pipeline with render targets'],
+        acc: [0.0, 0.85, 0.42], dark: [0.0, 0.2, 0.1], link: '#'
+      },
+      {
+        num: '04', cat: 'FULL TUTORIAL', title: 'GSAP MASTERCLASS',
+        desc: 'The complete GSAP masterclass. From basic tweens to complex timelines, ScrollTrigger page transitions, SplitText typography animations, and the advanced techniques used by top creative studios worldwide.',
+        tags: ['GSAP', 'ScrollTrigger', 'Timeline', 'SplitText', 'Flip', 'MotionPath'],
+        highlights: ['Master timelines and staggered animations', 'ScrollTrigger pinning and scrub effects', 'Studio-grade page transition system'],
+        acc: [1.0, 0.52, 0.0], dark: [0.28, 0.14, 0.0], link: '#'
+      },
+      {
+        num: '05', cat: 'CREATIVE CODING', title: 'CREATIVE WEB FX',
+        desc: 'Build jaw-dropping creative coding effects with vanilla JS and Canvas. Particle systems, generative art, mouse trail shaders, ASCII art renderers, and interactive canvas animations that feel alive.',
+        tags: ['Canvas API', 'Particles', 'Generative Art', 'ASCII', 'Mouse FX', 'Creative Code'],
+        highlights: ['GPU particle systems with 100k+ particles', 'Generative art that responds to audio', 'Custom ASCII renderer in WebGL'],
+        acc: [0.0, 0.7, 1.0], dark: [0.0, 0.18, 0.28], link: '#'
+      },
+      {
+        num: '06', cat: 'COMING SOON', title: 'FRONTEND ANIMATION COURSE',
+        desc: 'A complete frontend animation course — CSS transitions, keyframes, the Web Animations API, Framer Motion, scroll-driven animations, and building a fully animated portfolio from scratch. Stay tuned.',
+        tags: ['CSS', 'Framer Motion', 'WAAPI', 'Scroll-Driven', 'Portfolio', 'Beginner Friendly'],
+        highlights: ['CSS-only animation masterclass', 'Framer Motion for React developers', 'Build a full animated portfolio step by step'],
+        acc: [0.75, 0.08, 0.75], dark: [0.18, 0.02, 0.18], link: '#'
+      },
+    ];
+
+    /* ── CURSOR ── */
+    const cur = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx + 'px'; cur.style.top = my + 'px'; });
+    (function curAnim() { rx += (mx - rx) * .12; ry += (my - ry) * .12; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(curAnim); })();
+
+    /* ── LOADER ── */
+    const bar = document.getElementById('loader-bar');
+    const pct = document.getElementById('loader-pct');
+    const loader = document.getElementById('loader');
+    let p = 0;
+    const iv = setInterval(() => {
+      p += Math.random() * 3 + 1;
+      if (p >= 100) { p = 100; clearInterval(iv); setTimeout(() => { loader.classList.add('hide'); revealInit(); }, 400); }
+      bar.style.width = p + '%'; pct.textContent = Math.round(p) + '%';
+    }, 40);
+
+    /* ── MARQUEE ── */
+    const items = ['THREE.JS', 'REACT THREE FIBER', 'GLSL SHADERS', 'GSAP', 'CREATIVE CODING', 'WEB ANIMATION', 'JAVASCRIPT', 'WEBGL'];
+    const m = document.getElementById('marquee');
+    const full = [...items, ...items].map(t => `<span class="marquee-item">${t}</span><span class="marquee-dot">✦</span>`).join('');
+    m.innerHTML = full + full;
+
+    /* ── REVEAL ON SCROLL ── */
+    function revealInit() {
+      const els = document.querySelectorAll('.reveal');
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in') });
+      }, { threshold: .15 });
+      els.forEach(e => obs.observe(e));
+    }
+
+    /* ── THREE.JS CAROUSEL ── */
+    const wrap = document.getElementById('canvas-wrap');
+    const canvas = document.getElementById('three-canvas');
+    const W = wrap.offsetWidth, H = wrap.offsetHeight;
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+    renderer.setSize(W, H); renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setClearColor(0xf2f0eb, 1);
+
+    const sc = new THREE.Scene();
+    const cam2 = new THREE.PerspectiveCamera(40, W / H, 0.1, 100);
+    cam2.position.z = 7;
+
+    const VS = `
+varying vec2 vUv;varying vec3 vN;uniform float uTime;
+void main(){vUv=uv;vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}
+`;
+    const FS = `
+varying vec2 vUv;varying vec3 vN;
+uniform float uTime;uniform vec3 uAcc;uniform vec3 uDark;uniform float uH;uniform float uSel;
+float r(vec2 n){return fract(sin(dot(n,vec2(12.9898,4.1414)))*43758.5453);}
+float ns(vec2 p){vec2 i=floor(p);vec2 f=fract(p);vec2 u=f*f*(3.-2.*f);
+return mix(mix(r(i),r(i+vec2(1,0)),u.x),mix(r(i+vec2(0,1)),r(i+vec2(1,1)),u.x),u.y);}
+void main(){
+  float t=uTime*.3;
+  float n=ns(vUv*3.5+t*.4)*.6+ns(vUv*9.-t*.2)*.4;
+  vec3 col=mix(uDark,uAcc*.75,n);
+  col=mix(col,min(uAcc+vec3(.25),vec3(1.)),pow(n,3.)*.5);
+  float rim=pow(1.-max(dot(vN,vec3(0,0,1)),0.),2.);
+  col+=uAcc*rim*(.4+uH*.8);
+  float scan=step(.93,mod(vUv.y*55.+uTime*1.5,1.))*.035;col+=scan;
+  col-=smoothstep(.3,.5,length(vUv-.5))*.25;
+  col+=uSel*uAcc*.4;
+  gl_FragColor=vec4(col,.93+uH*.05+rim*.06);
+}
+`;
+
+    const N2 = projects.length, SP = 1.55, TW2 = (N2 - 1) * SP;
+    const geo2 = new THREE.PlaneGeometry(1.2, 1.8, 24, 24);
+    const meshes2 = [], mats2 = [];
+
+    function makeLabel(p) {
+      const cv = document.createElement('canvas'); cv.width = 512; cv.height = 640;
+      const c = cv.getContext('2d');
+      c.fillStyle = 'rgba(0,0,0,0)'; c.fillRect(0, 0, 512, 640);
+      c.fillStyle = 'rgba(255,255,255,0.06)'; c.fillRect(0, 0, 512, 640);
+      c.fillStyle = 'rgba(255,100,0,0.9)';
+      c.font = '700 13px "Space Mono",monospace'; c.letterSpacing = '3px';
+      c.fillText(p.cat, 32, 52);
+      c.fillStyle = 'rgba(255,255,255,0.95)';
+      c.font = '900 58px "Bebas Neue","Arial Black",Arial';
+      const lines = p.title.split(' ');
+      let y = 130, lineW = [];
+      lines.forEach(l => { lineW.push(c.measureText(l).width) });
+      if (lineW[0] > 420) {
+        const mid = Math.ceil(lines.length / 2);
+        [lines.slice(0, mid).join(' '), lines.slice(mid).join(' ')].forEach((l, i) => { c.fillText(l, 32, 130 + i * 62) });
+        y = 130 + 62 * 2 + 20;
+      } else {
+        let row = [], rows = [];
+        lines.forEach(w => {
+          const test = [...row, w].join(' ');
+          if (c.measureText(test).width > 420 && row.length > 0) { rows.push(row.join(' ')); row = [w]; } else { row.push(w); }
+        });
+        if (row.length) rows.push(row.join(' '));
+        rows.forEach((r, i) => c.fillText(r, 32, 130 + i * 62));
+        y = 130 + rows.length * 62 + 20;
+      }
+      c.fillStyle = 'rgba(255,255,255,0.3)';
+      c.font = '400 11px "Space Mono",monospace'; c.letterSpacing = '1px';
+      p.tags.slice(0, 3).forEach((t, i) => c.fillText(t, 32, y + i * 22));
+      c.strokeStyle = 'rgba(255,100,0,0.4)'; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(32, 580); c.lineTo(200, 580); c.stroke();
+      c.fillStyle = 'rgba(255,100,0,0.8)';
+      c.font = '700 10px "Space Mono",monospace'; c.letterSpacing = '2px';
+      c.fillText('CLICK TO OPEN →', 32, 600);
+      return new THREE.CanvasTexture(cv);
+    }
+
+    projects.forEach((p, i) => {
+      const mat = new THREE.ShaderMaterial({
+        vertexShader: VS, fragmentShader: FS,
+        uniforms: { uTime: { value: 0 }, uAcc: { value: new THREE.Vector3(...p.acc) }, uDark: { value: new THREE.Vector3(...p.dark) }, uH: { value: 0 }, uSel: { value: 0 } },
+        transparent: true
+      });
+      const m = new THREE.Mesh(geo2, mat);
+      m.position.set(i * SP - TW2 / 2, 0, 0);
+      m.userData = { i, bx: i * SP - TW2 / 2 };
+      sc.add(m);
+      const labelMat = new THREE.MeshBasicMaterial({ map: makeLabel(p), transparent: true });
+      const label = new THREE.Mesh(new THREE.PlaneGeometry(1.18, 1.78), labelMat);
+      label.position.z = 0.01; m.add(label);
+      const eg = new THREE.EdgesGeometry(new THREE.PlaneGeometry(1.2, 1.8));
+      const em = new THREE.LineBasicMaterial({ color: 0x111111, transparent: true, opacity: .1 });
+      m.add(new THREE.LineSegments(eg, em));
+      meshes2.push(m); mats2.push(mat);
+    });
+
+    let sX = 0, tSX = 0, hovI = -1, isDrag2 = false, dsx2 = 0, dss2 = 0, clickOk = true;
+    const ray2 = new THREE.Raycaster(); const mv2 = new THREE.Vector2();
+
+    wrap.addEventListener('mousemove', e => {
+      const r = wrap.getBoundingClientRect();
+      mv2.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height * 2 - 1));
+      if (isDrag2) { const dx = (e.clientX - dsx2) * .007; tSX = Math.max(-(N2 - 1) * .5, Math.min((N2 - 1) * .5, dss2 - dx)); clickOk = false; }
+    });
+    wrap.addEventListener('wheel', e => { e.preventDefault(); tSX = Math.max(-(N2 - 1) * .5, Math.min((N2 - 1) * .5, tSX + e.deltaY * .004)); }, { passive: false });
+    wrap.addEventListener('mousedown', e => { isDrag2 = true; dsx2 = e.clientX; dss2 = tSX; clickOk = true; });
+    window.addEventListener('mouseup', () => isDrag2 = false);
+    wrap.addEventListener('click', () => { if (clickOk && hovI >= 0) openModal(projects[hovI], hovI); });
+
+    function openModal(p, i) {
+      document.getElementById('pm-num').textContent = p.num + ' / 0' + N2;
+      document.getElementById('pm-cat').textContent = p.cat;
+      document.getElementById('pm-title').textContent = p.title;
+      document.getElementById('pm-desc').textContent = p.desc;
+      document.getElementById('pm-tags').innerHTML = p.tags.map(t => `<span class="pm-tag">${t}</span>`).join('');
+      document.getElementById('pm-highlights').innerHTML = p.highlights.map(h => `<div class="pm-highlight">${h}</div>`).join('');
+      const lnk = document.getElementById('pm-link');
+      lnk.href = p.link; lnk.textContent = p.cat === 'COMING SOON' ? 'STAY TUNED →' : 'WATCH TUTORIAL →';
+      document.getElementById('proj-modal').classList.add('open');
+      mats2.forEach((m, j) => m.uniforms.uSel.value = j === i ? 1 : 0);
+    }
+    document.getElementById('pm-close').onclick = closeModal;
+    document.getElementById('proj-modal').addEventListener('click', e => { if (e.target === document.getElementById('proj-modal')) closeModal(); });
+    function closeModal() { document.getElementById('proj-modal').classList.remove('open'); mats2.forEach(m => m.uniforms.uSel.value = 0); }
+
+    const clk = new THREE.Clock();
+    (function tick() {
+      requestAnimationFrame(tick);
+      const t = clk.getElapsedTime();
+      sX += (tSX - sX) * .08;
+      ray2.setFromCamera(mv2, cam2);
+      const hits = ray2.intersectObjects(meshes2);
+      hovI = hits.length ? hits[0].object.userData.i : -1;
+      wrap.style.cursor = hovI >= 0 ? 'none' : isDrag2 ? 'none' : 'none';
+      const mxN = mv2.x, myN = mv2.y;
+      cam2.position.x = mxN * .3; cam2.position.y = myN * .15; cam2.lookAt(0, 0, 0);
+      meshes2.forEach((m, i) => {
+        const bx = m.userData.bx - sX * SP;
+        m.position.x = bx; m.position.y = Math.sin(t * .45 + i * 1.1) * .04;
+        m.rotation.y = -bx * .04;
+        mats2[i].uniforms.uTime.value = t;
+        const isH = i === hovI;
+        mats2[i].uniforms.uH.value += (isH ? 1 : 0 - mats2[i].uniforms.uH.value) * .1;
+        m.position.z += (isH ? .25 : 0 - m.position.z) * .12;
+      });
+      renderer.render(sc, cam2);
+    })();
+
+    window.addEventListener('resize', () => {
+      const nw = wrap.offsetWidth;
+      cam2.aspect = nw / H; cam2.updateProjectionMatrix();
+      renderer.setSize(nw, H);
+    });
+  </script>
+</body>
+
+</html>
